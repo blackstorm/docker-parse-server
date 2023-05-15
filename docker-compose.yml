@@ -15,21 +15,32 @@ services:
     environment:
       - PARSE_SERVER_APPLICATION_ID=abc
       - PARSE_SERVER_APPLICATION_NAME=mini-ticket
-      - PARSE_SERVER_MASTER_KEY=masterkey
+      - PARSE_SERVER_MASTER_KEY=123
+      - PARSE_SERVER_MASTER_KEY_IPS=0.0.0.0/0,::1
+      - PARSE_SERVER_JAVASCRIPT_KEY=123
+      - PARSE_SERVER_REST_API_KEY=123
       - PARSE_SERVER_DATABASE_URI=mongodb://admin:admin@database/parse_server?authSource=admin
-      # TODO: substitue with a working parse server url
-      # - PARSE_SERVER_URL=http://10.0.2.2:1337/parse
+      - PARSE_SERVER_MOUNT_PATH=/parse
       - PARSE_SERVER_MOUNT_GRAPHQL=true
+    ports:
+      - "1337:1337"
     volumes:
       - ./volumes/server:/data/server
   dashboard:
     image: parseplatform/parse-dashboard:5.1.0
     environment:
-      - PARSE_DASHBOARD_MASTER_KEY=masterkey
       - PARSE_DASHBOARD_APP_ID=abc
+      - PARSE_DASHBOARD_COOKIE_SESSION_SECRET=AB8849B6-D725-4A75-AA73-AB7103F0363F
       - PARSE_DASHBOARD_APP_NAME=mini-ticket
+      - PARSE_DASHBOARD_MASTER_KEY=123
+      - PARSE_DASHBOARD_JAVASCRIPT_KEY=123
+      - PARSE_DASHBOARD_REST_API_KEY=123
       - PARSE_DASHBOARD_USER_ID=admin
       - PARSE_DASHBOARD_USER_PASSWORD=admin
-      - PARSE_DASHBOARD_SERVER_URL="http://server:1337/parse"
+      - PARSE_DASHBOARD_SERVER_URL=${PARSE_DASHBOARD_SERVER_URL-http://localhost:1337/parse}
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=true
+      - MOUNT_PATH=/dashboard
+    ports:
+      - "4040:4040"
     depends_on:
       - server
